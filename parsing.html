@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>POLYAKDLC.TECH</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(93, 0, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(255, 0, 212, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom, #0a0015 0%, #000000 100%);
+      color: #e0e0ff;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 60px auto;
+      padding: 0 30px;
+      text-align: center;
+      position: relative;
+    }
+    h1 {
+      font-size: 4.2rem;
+      margin: 0.2em 0 0.8em;
+      background: linear-gradient(90deg, #a78bfa, #7dd3fc, #f472b6, #a78bfa);
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 900;
+      letter-spacing: -1px;
+      text-shadow: 0 0 50px rgba(167, 139, 250, 0.6);
+      animation: gradientShift 8s ease infinite;
+      cursor: pointer; /* чтобы было понятно, что можно кликать */
+    }
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    .tree {
+      position: relative;
+      padding: 100px 0 160px;
+    }
+    .level {
+      margin: 90px 0;
+      position: relative;
+    }
+    .level-title {
+      font-size: 1.6rem;
+      color: #a0a0ff;
+      margin-bottom: 2.2rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-weight: 300;
+      position: relative;
+      display: inline-block;
+      padding: 0 20px;
+    }
+    .level-title::before,
+    .level-title::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #7c3aed, transparent);
+    }
+    .level-title::before { left: -70px; }
+    .level-title::after { right: -70px; }
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 28px 36px;
+    }
+    .card {
+      width: 240px;
+      padding: 26px 22px;
+      border-radius: 20px;
+      background: rgba(15, 10, 35, 0.7);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(120, 100, 255, 0.2);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.1), transparent 30%);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .card:hover::before { opacity: 1; }
+    .card:hover {
+      transform: translateY(-15px) scale(1.05);
+      border-color: #a78bfa88;
+      box-shadow:
+        0 30px 60px -15px rgba(167, 139, 250, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    .card.clickable:hover { transform: translateY(-18px) scale(1.07); }
+    .name {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin: 0.4em 0;
+      background: linear-gradient(90deg, #c4b5fd, #a5b4fc);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      position: relative;
+      z-index: 1;
+    }
+    .role {
+      font-size: 0.95rem;
+      color: #b0b0e0;
+      margin-top: 0.4em;
+      font-weight: 300;
+      position: relative;
+      z-index: 1;
+    }
+    .level:not(:first-child)::before {
+      content: '';
+      position: absolute;
+      top: -55px;
+      left: 50%;
+      width: 3px;
+      height: 55px;
+      background: linear-gradient(to bottom, #4f46e5, #a78bfa, #4f46e5);
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+    .level::after {
+      content: '';
+      position: absolute;
+      bottom: -55px;
+      left: 50%;
+      width: 3px;
+      height: 55px;
+      background: linear-gradient(to bottom, #a78bfa, #4f46e5, #a78bfa);
+      transform: translateX(-50%);
+      border-radius: 2px;
+      opacity: 0.7;
+    }
+    .glow {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(167,139,250,0.15) 0%, transparent 70%);
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: -1;
+      filter: blur(100px);
+      animation: pulse 8s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 0.4; }
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.3s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal-content {
+      background: rgba(20, 15, 45, 0.95);
+      border: 1px solid #7c3aedaa;
+      border-radius: 20px;
+      max-width: 480px;
+      width: 100%;
+      padding: 40px 36px;
+      position: relative;
+      box-shadow:
+        0 40px 80px rgba(0,0,0,0.7),
+        0 0 0 1px rgba(124,58,237,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+      animation: modalSlide 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes modalSlide {
+      from { transform: translateY(40px) scale(0.95); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .close {
+      position: absolute;
+      top: 16px;
+      right: 22px;
+      font-size: 32px;
+      color: #a0a0ff;
+      cursor: pointer;
+      transition: all 0.3s;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    .close:hover {
+      color: white;
+      background: rgba(255,255,255,0.05);
+    }
+    .modal-name {
+      font-size: 2.4rem;
+      font-weight: 900;
+      margin: 0 0 0.8em;
+      background: linear-gradient(90deg, #d8b4fe, #a5b4fc, #c084fc);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .modal-desc {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #d1d5db;
+      margin: 1.5em 0 2em;
+      padding: 0 10px;
+    }
+    .modal-links a {
+      display: inline-block;
+      margin: 0 14px 10px 0;
+      padding: 10px 20px;
+      background: rgba(167,139,250,0.15);
+      border: 1px solid rgba(167,139,250,0.4);
+      border-radius: 10px;
+      color: #c4b5fd;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .modal-links a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: left 0.6s;
+    }
+    .modal-links a:hover::before { left: 100%; }
+    .modal-links a:hover {
+      background: rgba(167,139,250,0.3);
+      border-color: #a78bfa;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(167, 139, 250, 0.2);
+    }
+    @media (max-width: 768px) {
+      h1 { font-size: 3rem; }
+      .card { width: 280px; }
+      .modal-content { padding: 30px 24px; }
+      .level-title::before,
+      .level-title::after { width: 30px; }
+      .level-title::before { left: -40px; }
+      .level-title::after { right: -40px; }
+    }
+    @media (max-width: 480px) {
+      h1 { font-size: 2.4rem; }
+      .container { padding: 0 20px; }
+      .level-title { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Polyak</h1>
+  <div class="tree">
+    <div class="glow"></div>
+    <div class="level">
+      <div class="level-title">Developer</div>
+      <div class="cards">
+        <div class="card clickable" data-modal="m1le">
+          <div class="name">M1le</div>
+        </div>
+        <div class="card clickable" data-modal="wh1teneo">
+          <div class="name">WaithNeo</div>
+        </div>
+        <div class="card clickable" data-modal="skywhydll">
+          <div class="name">SkyWhyDll</div>
+        </div>
+      </div>
+    </div>
+    <div class="level">
+      <div class="level-title">Протер / Protection</div>
+      <div class="cards">
+        <div class="card clickable" data-modal="kernel">
+          <div class="name">kernel.h</div>
+          <div class="role">kernel core</div>
+        </div>
+      </div>
+    </div>
+    <div class="level">
+      <div class="level-title">Ютубер / Media</div>
+      <div class="cards">
+        <div class="card"><div class="name">Ressentles</div></div>
+        <div class="card"><div class="name">1th_noessis</div></div>
+        <div class="card"><div class="name">catlantik1337</div></div>
+        <div class="card"><div class="name">defesan1337</div></div>
+        <div class="card"><div class="name">fucking</div></div>
+        <div class="card"><div class="name">human</div></div>
+        <div class="card"><div class="name">lovex</div></div>
+        <div class="card"><div class="name">towne</div></div>
+        <div class="card"><div class="name">crazyK</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Модальные окна разработчиков -->
+<div id="modal-m1le" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('modal-m1le')">×</span>
+    <div class="modal-name">M1le</div>
+    <div class="modal-desc">
+      Основной разработчик клиента. Отвечает за большинство модулей и обход античитов.
+    </div>
+    <div class="modal-links">
+      <a href="https://youtube.com/@M1lehvh" target="_blank">YouTube</a>
+      <a href="https://discord.gg/3jNFvCffNj" target="_blank">Discord: M1lehvh</a>
+    </div>
+  </div>
+</div>
+
+<div id="modal-wh1teneo" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('modal-wh1teneo')">×</span>
+    <div class="modal-name">Wh1teNeo</div>
+    <div class="modal-desc">
+      Основной разработчик клиента. Отвечает за большинство модулей и обход античитов.
+    </div>
+    <div class="modal-links">
+      <a href="https://youtube.com/channel/@WaithNeo" target="_blank">YouTube</a>
+      <a href="https://discord.gg/3jNFvCffNj" target="_blank">Discord: arabikarabik</a>
+    </div>
+  </div>
+</div>
+
+<div id="modal-skywhydll" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('modal-skywhydll')">×</span>
+    <div class="modal-name">SkyWhyDll</div>
+    <div class="modal-desc">
+      Специалист по визуалам, GUI и рендер-модулям. Создаёт большинство интерфейсов, HUD-ов, клик-гуи.
+    </div>
+    <div class="modal-links">
+      <a href="https://youtube.com/@SkyWhyDll" target="_blank">YouTube</a>
+      <a href="https://discord.gg/3jNFvCffNj" target="_blank">Discord: skywhydll00</a>
+    </div>
+  </div>
+</div>
+
+<div id="modal-kernel" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('modal-kernel')">×</span>
+    <div class="modal-name">kernel.h</div>
+    <div class="modal-desc">
+      Главный специалист по защите клиента.
+    </div>
+    <div class="modal-links">
+      <a href="https://discord.gg/3jNFvCffNj" target="_blank">Discord: kernel.h</a>
+    </div>
+  </div>
+</div>
+
+<!-- Секретное модальное окно для пасхалки -->
+<div id="secret-modal" class="modal">
+  <div class="modal-content" style="max-width:420px;">
+    <span class="close" onclick="document.getElementById('secret-modal').style.display='none'">×</span>
+    <div class="modal-name" style="font-size:2.2rem;">Секретный доступ</div>
+    <div class="modal-desc" style="margin:1.5em 0;">
+      Ты нашёл тайную дверь...<br>Введи пароль, чтобы открыть её.
+    </div>
+    <input type="text" id="secret-password" placeholder="Пароль..." 
+           style="width:100%; padding:14px; font-size:1.2rem; border-radius:10px; border:1px solid #7c3aed; background:rgba(30,25,60,0.8); color:#e0e0ff; box-sizing:border-box;">
+    <button onclick="checkSecretPassword()" 
+            style="margin-top:1.8em; padding:14px 40px; background:#7c3aed; border:none; border-radius:10px; color:white; font-weight:bold; font-size:1.1rem; cursor:pointer; transition: all 0.3s;">
+      Открыть
+    </button>
+  </div>
+</div>
+
+<!-- Canvas для эффекта Матрицы -->
+<canvas id="matrix-canvas" style="position:fixed; inset:0; pointer-events:none; z-index:999; opacity:0; transition:opacity 0.4s;"></canvas>
+
+<script>
+// Модальные окна разработчиков
+document.querySelectorAll('.clickable').forEach(card => {
+  card.addEventListener('click', () => {
+    const modalId = card.getAttribute('data-modal');
+    document.getElementById(`modal-${modalId}`).style.display = 'flex';
+  });
+});
+
+function closeModal(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+window.onclick = function(event) {
+  if (event.target.classList.contains('modal')) {
+    event.target.style.display = 'none';
+  }
+}
+
+// MATRIX RAIN EFFECT для kernel.h
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+let animationId = null;
+let columns = [];
+let drops = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const fontSize = 14;
+  columns = Math.floor(canvas.width / fontSize);
+  drops = new Array(columns).fill(1);
+}
+
+function drawMatrix() {
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#0f0';
+  ctx.font = '14px monospace';
+  for (let i = 0; i < drops.length; i++) {
+    const text = String.fromCharCode(0x30A0 + Math.random() * (0x30FF - 0x30A0 + 1));
+    const x = i * 14;
+    const y = drops[i] * 14;
+    ctx.fillText(text, x, y);
+    if (y > canvas.height && Math.random() > 0.975) {
+      drops[i] = 0;
+    }
+    drops[i]++;
+  }
+}
+
+function startMatrix() {
+  if (animationId) return;
+  resizeCanvas();
+  animationId = setInterval(drawMatrix, 40);
+  canvas.style.opacity = 0.75;
+}
+
+function stopMatrix() {
+  if (!animationId) return;
+  clearInterval(animationId);
+  animationId = null;
+  canvas.style.opacity = 0;
+}
+
+window.addEventListener('resize', resizeCanvas);
+
+const kernelCard = document.querySelector('.card[data-modal="kernel"]');
+if (kernelCard) {
+  kernelCard.addEventListener('mouseenter', startMatrix);
+  kernelCard.addEventListener('mouseleave', stopMatrix);
+  document.addEventListener('mouseleave', stopMatrix);
+}
+
+// Пасхалка: 6 кликов по Polyak → секретный ввод пароля
+let polyakClickCount = 0;
+const MAX_CLICKS = 6;
+
+document.querySelector('h1').addEventListener('click', () => {
+  polyakClickCount++;
+  if (polyakClickCount >= MAX_CLICKS) {
+    polyakClickCount = 0;
+    document.getElementById('secret-modal').style.display = 'flex';
+    document.getElementById('secret-password').focus();
+  }
+});
+
+function checkSecretPassword() {
+  const input = document.getElementById('secret-password').value.trim().toLowerCase();
+  if (input === "polyak") {
+    window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+  } else {
+    alert("Неверный пароль... Попробуй ещё раз?");
+    document.getElementById('secret-password').value = "";
+    document.getElementById('secret-password').focus();
+  }
+}
+</script>
+</body>
+</html>
