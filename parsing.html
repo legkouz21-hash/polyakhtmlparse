@@ -330,7 +330,6 @@
   </div>
 </div>
 
-<!-- Модальные окна разработчиков -->
 <div id="modal-m1le" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal('modal-m1le')">×</span>
@@ -368,7 +367,7 @@
     </div>
     <div class="modal-links">
       <a href="https://youtube.com/@SkyWhyDll" target="_blank">YouTube</a>
-      <a href="https://discord.gg/3jNFvCffNj" target="_blank">Discord: skywhydll00</a>
+      <a href="https:discord.gg/3jNFvCffNj" target="_blank">Discord: skywhydll00</a>
     </div>
   </div>
 </div>
@@ -386,7 +385,6 @@
   </div>
 </div>
 
-<!-- Секретное модальное окно для пасхалки -->
 <div id="secret-modal" class="modal">
   <div class="modal-content" style="max-width:420px;">
     <span class="close" onclick="document.getElementById('secret-modal').style.display='none'">×</span>
@@ -403,11 +401,9 @@
   </div>
 </div>
 
-<!-- Canvas для эффекта Матрицы -->
 <canvas id="matrix-canvas" style="position:fixed; inset:0; pointer-events:none; z-index:999; opacity:0; transition:opacity 0.4s;"></canvas>
 
 <script>
-// Модальные окна разработчиков
 document.querySelectorAll('.clickable').forEach(card => {
   card.addEventListener('click', () => {
     const modalId = card.getAttribute('data-modal');
@@ -425,7 +421,6 @@ window.onclick = function(event) {
   }
 }
 
-// MATRIX RAIN EFFECT для kernel.h
 const canvas = document.getElementById('matrix-canvas');
 const ctx = canvas.getContext('2d');
 let animationId = null;
@@ -480,7 +475,6 @@ if (kernelCard) {
   document.addEventListener('mouseleave', stopMatrix);
 }
 
-// Пасхалка: 6 кликов по Polyak → секретный ввод пароля
 let polyakClickCount = 0;
 const MAX_CLICKS = 6;
 
@@ -505,4 +499,5 @@ function checkSecretPassword() {
 }
 </script>
 </body>
+
 </html>
