@@ -36,11 +36,46 @@
       letter-spacing: -1px;
       text-shadow: 0 0 50px rgba(167, 139, 250, 0.6);
       animation: gradientShift 8s ease infinite;
-      cursor: pointer; /* чтобы было понятно, что можно кликать */
+      cursor: pointer;
     }
     @keyframes gradientShift {
       0%, 100% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
+    }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 50px;
+    }
+    .tab-btn {
+      font-size: 1.5rem;
+      font-weight: 700;
+      padding: 12px 40px;
+      border-radius: 50px;
+      background: rgba(167,139,250,0.15);
+      border: 2px solid rgba(167,139,250,0.4);
+      color: #c4b5fd;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      border-color: #a78bfa;
+      color: white;
+      transform: scale(1.08);
+      box-shadow: 0 0 30px rgba(124,58,237,0.6);
+    }
+    .tab-btn:hover:not(.active) {
+      background: rgba(167,139,250,0.3);
+      border-color: #a78bfa;
+      transform: translateY(-3px);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
     }
     .tree {
       position: relative;
@@ -269,6 +304,87 @@
       transform: translateY(-3px);
       box-shadow: 0 10px 20px rgba(167, 139, 250, 0.2);
     }
+    .changelog {
+      max-width: 780px;
+      margin: 0 auto 100px;
+      text-align: left;
+      background: rgba(20,15,45,0.6);
+      border: 1px solid rgba(124,58,237,0.35);
+      border-radius: 16px;
+      padding: 40px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .changelog h2 {
+      font-size: 2.4rem;
+      text-align: center;
+      margin-bottom: 1.8em;
+      background: linear-gradient(90deg, #d8b4fe, #a5b4fc, #c084fc);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .changelog ul {
+      list-style: none;
+      padding: 0;
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: #d1d5db;
+    }
+    .changelog li {
+      margin-bottom: 1.1em;
+      position: relative;
+      padding-left: 2.2em;
+    }
+    .changelog li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: #a78bfa;
+      font-weight: bold;
+    }
+    .changelog .category {
+      color: #c4b5fd;
+      font-weight: 600;
+      margin-right: 0.5em;
+    }
+    .changelog .highlight {
+      color: #93c5fd;
+      font-weight: 500;
+    }
+    #m1le-tripscreen {
+      max-width: 620px !important;
+      overflow: hidden;
+      position: relative;
+    }
+    #m1le-glitch-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    #glitch-overlay {
+      background: linear-gradient(transparent, #ff00aa22, transparent);
+      mix-blend-mode: screen;
+    }
+    #stroke-text {
+      font-family: Impact, sans-serif;
+      letter-spacing: -2px;
+      -webkit-text-stroke: 3px #000;
+      text-shadow: 0 0 30px #ff00aa, 0 0 60px #ff00aa;
+    }
+    #flashbang {
+      transition: opacity 1.4s;
+    }
+    @keyframes rgbShift {
+      0%   { filter: hue-rotate(0deg) brightness(1); }
+      33%  { filter: hue-rotate(140deg) brightness(1.4); }
+      66%  { filter: hue-rotate(280deg) brightness(1.7); }
+      100% { filter: hue-rotate(360deg) brightness(1); }
+    }
+    #m1le-name {
+      animation: none;
+      transition: all 0.6s;
+    }
     @media (max-width: 768px) {
       h1 { font-size: 3rem; }
       .card { width: 280px; }
@@ -288,65 +404,106 @@
 <body>
 <div class="container">
   <h1>Polyak</h1>
-  <div class="tree">
-    <div class="glow"></div>
-    <div class="level">
-      <div class="level-title">Developer</div>
-      <div class="cards">
-        <div class="card clickable" data-modal="m1le">
-          <div class="name">M1le</div>
-        </div>
-        <div class="card clickable" data-modal="wh1teneo">
-          <div class="name">WaithNeo</div>
-        </div>
-        <div class="card clickable" data-modal="skywhydll">
-          <div class="name">SkyWhyDll</div>
-        </div>
-      </div>
-    </div>
-    <div class="level">
-      <div class="level-title">Протер / Protection</div>
-      <div class="cards">
-        <div class="card clickable" data-modal="kernel">
-          <div class="name">kernel.h</div>
-          <div class="role">kernel core</div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="team">Team</button>
+    <button class="tab-btn" data-tab="info">Info / Changelog</button>
+  </div>
+  <div id="team" class="tab-content active">
+    <div class="tree">
+      <div class="glow"></div>
+      <div class="level">
+        <div class="level-title">Developer</div>
+        <div class="cards">
+          <div class="card clickable" data-modal="m1le">
+            <div class="name">M1le</div>
+          </div>
+          <div class="card clickable" data-modal="wh1teneo">
+            <div class="name">WaithNeo</div>
+          </div>
+          <div class="card clickable" data-modal="skywhydll">
+            <div class="name">SkyWhyDll</div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="level">
-      <div class="level-title">Ютубер / Media</div>
-      <div class="cards">
-        <div class="card"><div class="name">Ressentles</div></div>
-        <div class="card"><div class="name">1th_noessis</div></div>
-        <div class="card"><div class="name">catlantik1337</div></div>
-        <div class="card"><div class="name">everslones</div></div>
-        <div class="card"><div class="name">defesan1337</div></div>
-        <div class="card"><div class="name">hreizy</div></div>
-        <div class="card"><div class="name">Nottario1337</div></div>
-        <div class="card"><div class="name">fucking</div></div>
-        <div class="card"><div class="name">human</div></div>
-        <div class="card"><div class="name">lovex</div></div>
-        <div class="card"><div class="name">towne</div></div>
-        <div class="card"><div class="name">crazyK</div></div>
+      <div class="level">
+        <div class="level-title">Протер / Protection</div>
+        <div class="cards">
+          <div class="card clickable" data-modal="kernel">
+            <div class="name">kernel.h</div>
+            <div class="role">kernel core</div>
+          </div>
+        </div>
+      </div>
+      <div class="level">
+        <div class="level-title">Ютубер / Media</div>
+        <div class="cards">
+          <div class="card"><div class="name">Ressentles</div></div>
+          <div class="card"><div class="name">1th_noessis</div></div>
+          <div class="card"><div class="name">catlantik1337</div></div>
+          <div class="card"><div class="name">everslones</div></div>
+          <div class="card"><div class="name">defesan1337</div></div>
+          <div class="card"><div class="name">hreizy</div></div>
+          <div class="card"><div class="name">Nottario1337</div></div>
+          <div class="card"><div class="name">fucking</div></div>
+          <div class="card"><div class="name">human</div></div>
+          <div class="card"><div class="name">lovex</div></div>
+          <div class="card"><div class="name">towne</div></div>
+          <div class="card"><div class="name">crazyK</div></div>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
-<div id="modal-m1le" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal('modal-m1le')">×</span>
-    <div class="modal-name">M1le</div>
-    <div class="modal-desc">
-      Основной разработчик клиента. Отвечает за большинство модулей и обход античитов.
+  <div id="info" class="tab-content">
+    <div class="changelog">
+      <h2>Change Log — Последнее обновление</h2>
+      <ul>
+        <li><span class="category">[RENDER]</span> EntityEsp - 3D Box переделан</li>
+        <li><span class="category">[RENDER]</span> EntityEsp - Добавлен мод Shader</li>
+        <li><span class="category">[COMBAT]</span> AutoTotem - улучшен</li>
+        <li><span class="category">[COMBAT]</span> AttackAura - улучшена LonyGrief/CakeWorld/WellMine</li>
+        <li><span class="category">[RENDER]</span> Hud - переделан</li>
+        <li><span class="category">[COMBAT]</span> FastCrystal - улучшен</li>
+        <li><span class="category">[MOVEMENT]</span> AutoSprint - пофикшены все баги</li>
+        <li><span class="category">[RENDER]</span> TargetESP - новый вид ( кубы )</li>
+        <li><span class="category">[RENDER]</span> MainMenu - секретная пасхалки в меню ( знак вопроса ) - при нажатии сами увидите</li>
+        <li><span class="category">[OTHER]</span> Дохуя мелких фиксов, и то что мы забыли</li>
+      </ul>
     </div>
-    <div class="modal-links">
+  </div>
+</div>
+<div id="modal-m1le" class="modal">
+  <div class="modal-content" id="m1le-tripscreen">
+    <span class="close" onclick="closeModal('modal-m1le')">×</span>
+    
+    <div class="modal-name" id="m1le-name">M1LE</div>
+    
+    <div style="position: relative; height: 160px; margin: 15px 0 25px; border-radius: 14px; overflow: hidden; border: 2px solid #ff00aa44; background: #0003;">
+      <canvas id="m1le-glitch-canvas" style="position: absolute; inset: 0; width: 100%; height: 100%;"></canvas>
+      <div id="glitch-overlay" style="position: absolute; inset: 0; pointer-events: none; background: linear-gradient(transparent, #ff00aa11, transparent); mix-blend-mode: screen;"></div>
+    </div>
+
+    <div class="modal-desc" style="font-size: 1.18rem; line-height: 1.7; position: relative; z-index: 2;">
+      <span style="color:#ff2e63; font-weight:bold;">главный палач античитов</span><br><br>
+      пишу модули быстрее, чем ты умираешь от кристалла<br>
+      <span style="color:#00ff9d; filter: drop-shadow(0 0 8px #00ff9d);">если читаешь это — ты уже в базе</span>
+    </div>
+
+    <div style="margin: 25px 0; text-align: center; font-size: 0.95rem; opacity: 0.7;">
+      <span class="egg-hint" data-hint="never" style="cursor:pointer; color:#ff79c6; margin:0 10px;">?</span>
+      <span class="egg-hint" data-hint="rick" style="cursor:pointer; color:#a78bfa; margin:0 10px;">r</span>
+      <span class="egg-hint" data-hint="crash" style="cursor:pointer; color:#ff5555; margin:0 10px;">!</span>
+      <span class="egg-hint" data-hint="matrix" style="cursor:pointer; color:#0f0; margin:0 10px;">0101</span>
+      <span class="egg-hint" data-hint="stroke" style="cursor:pointer; color:#ffff00; margin:0 10px;">stroke</span>
+    </div>
+
+    <div class="modal-links" style="position: relative; z-index: 2;">
       <a href="https://youtube.com/@M1lehvh" target="_blank">YouTube</a>
       <a href="https://discord.gg/3jNFvCffNj" target="_blank">Discord: M1lehvh</a>
     </div>
+    <div id="stroke-text" style="position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; opacity: 0; font-size: 120px; font-weight: 900; color: #ff00aa; mix-blend-mode: screen; z-index: 1; transform: scale(1.4); transition: all 1s;"></div>
+    <div id="flashbang" style="position: absolute; inset: 0; background: white; opacity: 0; z-index: 10; pointer-events: none; transition: opacity 1.4s;"></div>
   </div>
 </div>
-
 <div id="modal-wh1teneo" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal('modal-wh1teneo')">×</span>
@@ -360,7 +517,6 @@
     </div>
   </div>
 </div>
-
 <div id="modal-skywhydll" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal('modal-skywhydll')">×</span>
@@ -370,11 +526,10 @@
     </div>
     <div class="modal-links">
       <a href="https://youtube.com/@SkyWhyDll" target="_blank">YouTube</a>
-      <a href="https:discord.gg/3jNFvCffNj" target="_blank">Discord: skywhydll00</a>
+      <a href="https://discord.gg/3jNFvCffNj" target="_blank">Discord: skywhydll00</a>
     </div>
   </div>
 </div>
-
 <div id="modal-kernel" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal('modal-kernel')">×</span>
@@ -387,7 +542,6 @@
     </div>
   </div>
 </div>
-
 <div id="secret-modal" class="modal">
   <div class="modal-content" style="max-width:420px;">
     <span class="close" onclick="document.getElementById('secret-modal').style.display='none'">×</span>
@@ -395,41 +549,43 @@
     <div class="modal-desc" style="margin:1.5em 0;">
       Ты нашёл тайную дверь...<br>Введи пароль, чтобы открыть её.
     </div>
-    <input type="text" id="secret-password" placeholder="Пароль..." 
+    <input type="text" id="secret-password" placeholder="Пароль..."
            style="width:100%; padding:14px; font-size:1.2rem; border-radius:10px; border:1px solid #7c3aed; background:rgba(30,25,60,0.8); color:#e0e0ff; box-sizing:border-box;">
-    <button onclick="checkSecretPassword()" 
+    <button onclick="checkSecretPassword()"
             style="margin-top:1.8em; padding:14px 40px; background:#7c3aed; border:none; border-radius:10px; color:white; font-weight:bold; font-size:1.1rem; cursor:pointer; transition: all 0.3s;">
       Открыть
     </button>
   </div>
 </div>
-
 <canvas id="matrix-canvas" style="position:fixed; inset:0; pointer-events:none; z-index:999; opacity:0; transition:opacity 0.4s;"></canvas>
-
 <script>
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
 document.querySelectorAll('.clickable').forEach(card => {
   card.addEventListener('click', () => {
     const modalId = card.getAttribute('data-modal');
     document.getElementById(`modal-${modalId}`).style.display = 'flex';
   });
 });
-
 function closeModal(id) {
   document.getElementById(id).style.display = 'none';
 }
-
 window.onclick = function(event) {
   if (event.target.classList.contains('modal')) {
     event.target.style.display = 'none';
   }
-}
-
+};
 const canvas = document.getElementById('matrix-canvas');
 const ctx = canvas.getContext('2d');
 let animationId = null;
 let columns = [];
 let drops = [];
-
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -437,7 +593,6 @@ function resizeCanvas() {
   columns = Math.floor(canvas.width / fontSize);
   drops = new Array(columns).fill(1);
 }
-
 function drawMatrix() {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -454,33 +609,27 @@ function drawMatrix() {
     drops[i]++;
   }
 }
-
 function startMatrix() {
   if (animationId) return;
   resizeCanvas();
   animationId = setInterval(drawMatrix, 40);
   canvas.style.opacity = 0.75;
 }
-
 function stopMatrix() {
   if (!animationId) return;
   clearInterval(animationId);
   animationId = null;
   canvas.style.opacity = 0;
 }
-
 window.addEventListener('resize', resizeCanvas);
-
 const kernelCard = document.querySelector('.card[data-modal="kernel"]');
 if (kernelCard) {
   kernelCard.addEventListener('mouseenter', startMatrix);
   kernelCard.addEventListener('mouseleave', stopMatrix);
   document.addEventListener('mouseleave', stopMatrix);
 }
-
 let polyakClickCount = 0;
 const MAX_CLICKS = 6;
-
 document.querySelector('h1').addEventListener('click', () => {
   polyakClickCount++;
   if (polyakClickCount >= MAX_CLICKS) {
@@ -489,7 +638,6 @@ document.querySelector('h1').addEventListener('click', () => {
     document.getElementById('secret-password').focus();
   }
 });
-
 function checkSecretPassword() {
   const input = document.getElementById('secret-password').value.trim().toLowerCase();
   if (input === "polyak") {
@@ -500,8 +648,90 @@ function checkSecretPassword() {
     document.getElementById('secret-password').focus();
   }
 }
+const m1leModal = document.getElementById('modal-m1le');
+if (m1leModal) {
+  const glitchCanvas = document.getElementById('m1le-glitch-canvas');
+  const ctxGlitch = glitchCanvas.getContext('2d');
+  let glitchTime = 0;
+  function resizeGlitch() {
+    glitchCanvas.width = glitchCanvas.offsetWidth;
+    glitchCanvas.height = glitchCanvas.offsetHeight;
+  }
+  function drawGlitch() {
+    if (m1leModal.style.display === 'none') return;
+    ctxGlitch.fillStyle = 'rgba(0,0,0,0.12)';
+    ctxGlitch.fillRect(0,0,glitchCanvas.width,glitchCanvas.height);
+    const t = glitchTime * 0.03;
+    const amp = Math.sin(t*2.8) * 0.6 + 0.4;
+    for (let i = 0; i < 24; i++) {
+      const y = Math.random() * glitchCanvas.height;
+      const h = 5 + Math.random()*16;
+      const slice = glitchCanvas.width * (0.05 + Math.random()*0.9);
+      ctxGlitch.fillStyle = `hsl(${ (t*40 + i*50) % 360 }, 100%, ${55 + Math.sin(t*2 + i)*35}%)`;
+      ctxGlitch.fillRect(0, y, slice, h);
+      ctxGlitch.globalAlpha = 0.45 * amp;
+      ctxGlitch.drawImage(glitchCanvas, -12 + Math.sin(t*6+i)*20, 0);
+      ctxGlitch.globalAlpha = 0.35 * amp;
+      ctxGlitch.drawImage(glitchCanvas, 12 + Math.cos(t*7+i)*16, 0);
+      ctxGlitch.globalAlpha = 1;
+    }
+    glitchTime++;
+    requestAnimationFrame(drawGlitch);
+  }
+  document.querySelectorAll('.egg-hint').forEach(el => {
+    const hint = el.dataset.hint;
+    el.addEventListener('mouseenter', () => {
+      if (hint === 'never') el.textContent = "secret";
+      if (hint === 'rick') { el.style.color = '#ff0000'; el.textContent = "1000$"; }
+    });
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      if (hint === 'never') {
+        window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
+      }
+      else if (hint === 'rick') {
+        const audio = new Audio('https://www.myinstants.com/media/sounds/rickroll.mp3');
+        audio.volume = 0.4;
+        audio.play().catch(()=>{});
+      }
+      else if (hint === 'crash') {
+        alert("ты реально это нажал...");
+        let x = 1;
+        while (x < 999999999) x++;
+      }
+      else if (hint === 'matrix') {
+        startMatrix();
+        setTimeout(stopMatrix, 9000);
+      }
+      else if (hint === 'stroke') {
+        const stroke = document.getElementById('stroke-text');
+        stroke.textContent = "M1LE WAS HERE";
+        stroke.style.opacity = '0.85';
+        stroke.style.transform = 'scale(1)';
+        setTimeout(() => {
+          stroke.style.opacity = '0';
+          stroke.style.transform = 'scale(2.5)';
+        }, 2800);
+      }
+    });
+  });
+  document.getElementById('fake-ban-btn')?.addEventListener('click', e => {
+    e.preventDefault();
+    const flash = document.getElementById('flashbang');
+    flash.style.opacity = '1';
+    setTimeout(() => {
+      flash.style.opacity = '0';
+      alert("kicked by M1LE\nreason: excessive skill issue");
+    }, 1600);
+  });
+  document.querySelector('.card[data-modal="m1le"]').addEventListener('click', () => {
+    setTimeout(() => {
+      resizeGlitch();
+      drawGlitch();
+      document.getElementById('m1le-name').style.animation = 'rgbShift 3.5s infinite';
+    }, 400);
+  });
+}
 </script>
 </body>
-
 </html>
-
