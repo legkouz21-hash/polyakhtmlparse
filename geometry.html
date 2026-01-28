@@ -1267,40 +1267,46 @@ function showHint() {
 }
 
 function checkAnswer() {
-  const userAnswer = document.getElementById('userAnswer').value.trim().toLowerCase();
-  const correctAnswer = currentTicket.questions[currentQuestion].correct.toString().toLowerCase();
+  const input = document.getElementById('userAnswer');
+  if (!input) return;
+
+  let user = input.value.trim().toLowerCase()
+    .replace(/[°˚^]/g, '')          // убираем символы градусов
+    .replace(/\s+/g, ' ')           // нормализуем пробелы
+    .replace(/,/g, '.')             // запятая → точка (если числа дробные)
+    .replace(/[^0-9a-яёa-z√.]/gi, ''); // оставляем только нужные символы
+
+  let correct = (currentTicket.questions[currentQuestion].correct || '').toString()
+    .toLowerCase()
+    .replace(/[°˚^]/g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/,/g, '.');
+
+  const isCorrect = user === correct ||
+                   user.includes(correct) ||
+                   correct.includes(user) ||
+                   (correct.includes('√') && user.includes('sqrt'));
+
   const feedback = document.getElementById('feedback');
-  
-  const normalizedUser = userAnswer.replace(/[^0-9]/g, '');
-  const normalizedCorrect = correctAnswer.replace(/[^0-9]/g, '');
-  
-  const isCorrect = normalizedUser === normalizedCorrect || 
-                    userAnswer.includes(correctAnswer) || 
-                    correctAnswer.includes(userAnswer);
-  
+  feedback.style.display = 'block';
+
   if (isCorrect) {
     score++;
+    feedback.className = 'feedback correct';
     feedback.innerHTML = `
       <h4><span>✅</span> Правильно!</h4>
-      <p>Ваш ответ "${userAnswer}" верен.</p>
-      <div class="answer-content" style="margin-top: 10px;">
-        ${detailedMode ? currentTicket.questions[currentQuestion].a : currentTicket.questions[currentQuestion].short || currentTicket.questions[currentQuestion].a}
-      </div>
+      <p>Ваш ответ: ${input.value}</p>
+      <div class="answer-content">${detailedMode ? currentTicket.questions[currentQuestion].a : currentTicket.questions[currentQuestion].short || currentTicket.questions[currentQuestion].a}</div>
     `;
-    feedback.className = 'feedback correct';
   } else {
+    feedback.className = 'feedback incorrect';
     feedback.innerHTML = `
       <h4><span>❌</span> Неправильно</h4>
-      <p>Правильный ответ: <strong>${correctAnswer}</strong></p>
-      <div class="answer-content" style="margin-top: 10px;">
-        ${detailedMode ? currentTicket.questions[currentQuestion].a : currentTicket.questions[currentQuestion].short || currentTicket.questions[currentQuestion].a}
-      </div>
+      <p>Правильный ответ: <strong>${currentTicket.questions[currentQuestion].correct || '—'}</strong></p>
+      <div class="answer-content">${detailedMode ? currentTicket.questions[currentQuestion].a : currentTicket.questions[currentQuestion].short || currentTicket.questions[currentQuestion].a}</div>
     `;
-    feedback.className = 'feedback incorrect';
   }
-  
-  feedback.style.display = 'block';
-  
+
   setTimeout(() => {
     if (currentQuestion < currentTicket.questions.length - 1) {
       currentQuestion++;
@@ -1308,8 +1314,9 @@ function checkAnswer() {
     } else {
       showTestResults();
     }
-  }, 3000);
+  }, 2200); // чуть быстрее, чем 3000
 }
+
 
 function prevQuestion() {
   if (currentQuestion > 0) {
